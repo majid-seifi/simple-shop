@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductBookmarkController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,15 +23,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('api')->group(function () {
-    Route::post('auth/login', [\App\Http\Controllers\AuthController::class, 'login']);
+    Route::post('auth/login', [AuthController::class, 'login']);
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show']);
+        Route::get('profile', [ProfileController::class, 'show']);
 
-        Route::middleware('permission:Create product')->post('product', [\App\Http\Controllers\ProductController::class, 'store']);
-        Route::middleware('permission:Read product')->get('product/{product}', [\App\Http\Controllers\ProductController::class, 'show']);
-        Route::middleware('permission:Update product')->patch('product/{product}', [\App\Http\Controllers\ProductController::class, 'update']);
-        Route::middleware('permission:Delete product')->delete('product/{product}', [\App\Http\Controllers\ProductController::class, 'destroy']);
-        Route::middleware('permission:Bookmark product')->post('product/bookmark/{product}', [\App\Http\Controllers\ProductBookmarkController::class, 'bookmark']);
+        Route::middleware('permission:Create product')->post('product', [ProductController::class, 'store']);
+        Route::middleware('permission:Read product')->get('product/{product}', [ProductController::class, 'show']);
+        Route::middleware('permission:Update product')->patch('product/{product}', [ProductController::class, 'update']);
+        Route::middleware('permission:Delete product')->delete('product/{product}', [ProductController::class, 'destroy']);
+        Route::middleware('permission:Bookmark product')->post('product/bookmark/{product}', [ProductBookmarkController::class, 'bookmark']);
     });
-    Route::get('product', [\App\Http\Controllers\ProductController::class, 'index']);
+    Route::get('product', [ProductController::class, 'index']);
 });
