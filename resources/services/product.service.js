@@ -2,10 +2,16 @@ import axios from 'axios';
 import {MainService} from './main.service';
 
 class ProductService extends MainService {
-    list(page) {
-        const query = page ? `/?page=${page}` : '';
+    list(page = null, search = null) {
+        let params = {};
+        if (page) {
+            params.page = page;
+        }
+        if (search) {
+            params.search = search;
+        }
         return axios
-            .get('product' + query)
+            .get('product', {params})
             .then(response => {
                 return response.data;
             });

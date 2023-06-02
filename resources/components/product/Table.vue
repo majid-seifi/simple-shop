@@ -1,7 +1,14 @@
 <template>
     <div class="card">
         <div class="card-header">
-            <h4>{{ title }}</h4>
+            <div class="row">
+              <div :class="{ 'col-2': searchIsEnable }">
+                <h4>{{ title }}</h4>
+              </div>
+              <div v-if="searchIsEnable" class="col">
+                <input v-model="searchInput" placeholder="Search..." type="search" class="form-control" />
+              </div>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -55,13 +62,22 @@ import {defineComponent} from "vue";
 import ProductService from "../../services/product.service";
 
 export default defineComponent({
+    name: "Table",
+    data() {
+      return {
+        searchInput: '',
+      }
+    },
     props: {
         title: String,
         products: Array,
         loading: Boolean,
         links: Array,
+        getProducts: Function,
+        setLoading: Function,
+        searchIsEnable: Boolean,
+
     },
-    name: "Table",
     components: {Pagination},
     computed: {
         loggedIn() {
@@ -80,14 +96,22 @@ export default defineComponent({
     methods: {
         deleteProduct(id) {
             if (confirm("Are you sure to delete this product ?")) {
-                this.loading = true;
-                ProductService.delete(id).then(response => {
+                this.setLoading(true);
+                ProductService.delete(id).then(() => {
                     this.getProducts();
                 }).catch(error => {
                     console.log(error);
                 })
             }
         },
+    },
+    watch: {
+      searchInput: function (val, oldVal) {
+        if (val !== oldVal) {
+          this.$router.push({name: "productIndex", query: {search: val}})
+          //this.getProducts(1, val);
+        }
+      }
     },
 });
 </script>

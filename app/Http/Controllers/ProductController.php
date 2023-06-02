@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\ProductBookmark;
+use App\Repositories\SearchRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,9 +18,12 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function index()
+    public function index(SearchRepository $searchRepository)
     {
-        $products = Product::select(['id','title'])->paginate(10);
+        $products = request()->has('search')
+            ? $searchRepository->search(request('search'))
+            : Product::select(['id','title']);
+        $products = $products->paginate(10);
         $products->withPath('/products');
         return response()->json($products);
     }

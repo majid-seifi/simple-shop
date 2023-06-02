@@ -49,9 +49,22 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+    elasticsearch:
+        image: elasticsearch:7.17.2
+        environment:
+            - discovery.type=single-node
+        ports:
+            - '${ELASTICSEARCH_PORT:-9200}:9200'
+            - '${ELASTICSEARCH_BINARY_PORT:-9300}:9300'
+        volumes:
+            - sail_elasticsearch:/usr/share/elasticsearch/data
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
 volumes:
     sail_mysql:
+        driver: local
+    sail_elasticsearch:
         driver: local

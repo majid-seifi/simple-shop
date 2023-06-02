@@ -4,7 +4,7 @@
             <router-link :to='{name:"productAdd"}' class="btn btn-primary">Create</router-link>
         </div>
         <div class="col-12">
-            <Table title="Products" :products="products" :links="links" :loading="loading" />
+            <Table :searchIsEnable="true" title="Products" :setLoading="setLoading" :products="products" :links="links" :loading="loading" :getProducts="getProducts" />
         </div>
     </div>
 </template>
@@ -18,7 +18,7 @@ export default {
     components: {Table, Pagination},
     beforeRouteUpdate (to, from, next) {
         next();
-        this.getProducts(to?.query?.page);
+        this.getProducts(to?.query?.page, to?.query?.search);
     },
     data() {
         return {
@@ -28,7 +28,7 @@ export default {
         }
     },
     mounted() {
-        this.getProducts(this.$route?.query?.page);
+        this.getProducts(this.$route?.query?.page, this.$route?.query?.search);
     },
     computed: {
         hasCreatePermission() {
@@ -36,9 +36,9 @@ export default {
         },
     },
     methods: {
-        async getProducts(page) {
+        async getProducts(page, query = null) {
             this.loading = true;
-            ProductService.list(page).then(response => {
+            ProductService.list(page, query).then(response => {
                 this.products = response.data;
                 this.links = response.links;
             }).catch(error => {
@@ -49,6 +49,9 @@ export default {
                 this.loading = false;
             });
         },
+        setLoading(status) {
+          this.loading = status;
+        }
     },
 }
 </script>
